@@ -1,0 +1,50 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Permisos necesarios para desplegar en GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Solo un despliegue a la vez
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Descargar el código
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 2. Reemplazar weatherService.js con la versión estática
+      #    que llama directamente a Open-Meteo (sin backend Node.js)
+      - name: Usar weatherService estático para GitHub Pages
+        run: cp frontend/services/weatherService.static.js frontend/services/weatherService.js
+
+      # 3. Configurar GitHub Pages
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      # 4. Subir el directorio frontend/ como artefacto de Pages
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './frontend'
+
+      # 5. Desplegar en GitHub Pages
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
