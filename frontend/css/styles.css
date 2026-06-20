@@ -1,0 +1,770 @@
+/* ============================================================
+   TEMA: CSS Base — reset, selectores, organización
+   TEMA: Layouts CSS — Flexbox y CSS Grid
+   TEMA: CSS Avanzado — Variables CSS, transiciones, animaciones,
+                         hover effects, sombras modernas
+   Grupo G9 - Desarrollo Web - AppClima
+   ============================================================ */
+
+/* ── IMPORTAR FUENTE GOOGLE ────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap');
+
+/* ── VARIABLES CSS ─────────────────────────────────────────── */
+/* TEMA: CSS Avanzado — custom properties (variables CSS) */
+:root {
+  /* Paleta principal */
+  --primary: #6366f1;
+  --primary-light: #818cf8;
+  --primary-dark: #4f46e5;
+  --accent: #06b6d4;
+  --accent-light: #22d3ee;
+
+  /* Fondos */
+  --bg-main: #0f0f1a;
+  --bg-card: rgba(255, 255, 255, 0.06);
+  --bg-card-hover: rgba(255, 255, 255, 0.10);
+  --bg-input: rgba(255, 255, 255, 0.08);
+  --bg-glass: rgba(255, 255, 255, 0.04);
+
+  /* Texto */
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+
+  /* Bordes */
+  --border: rgba(255, 255, 255, 0.10);
+  --border-focus: rgba(99, 102, 241, 0.60);
+
+  /* Sombras modernas */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 8px 32px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 24px 64px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 40px rgba(99, 102, 241, 0.25);
+
+  /* Radios */
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+
+  /* Tipografía */
+  --font-main: 'Inter', sans-serif;
+  --font-display: 'Outfit', sans-serif;
+
+  /* Transiciones */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.5s ease;
+
+  /* Fondos de clima */
+  --grad-default: linear-gradient(135deg, #1e1b4b 0%, #0f172a 50%, #0c1222 100%);
+  --grad-clear: linear-gradient(135deg, #1e3a5f 0%, #0c2d48 50%, #071524 100%);
+  --grad-clouds: linear-gradient(135deg, #1e293b 0%, #0f172a 50%, #090e1a 100%);
+  --grad-rain: linear-gradient(135deg, #0f2027 0%, #1a2f3f 50%, #0a1628 100%);
+  --grad-thunderstorm: linear-gradient(135deg, #0d0d1a 0%, #1a0d2e 50%, #0a0612 100%);
+  --grad-snow: linear-gradient(135deg, #1a2744 0%, #0d1a2d 50%, #081018 100%);
+  --grad-fog: linear-gradient(135deg, #1c1c2e 0%, #2d2d44 50%, #14142a 100%);
+}
+
+/* ── CSS RESET Y BASE ──────────────────────────────────────── */
+/* TEMA: CSS Base — reset universal */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  /* TEMA: CSS Avanzado — fuente personalizada, fondo oscuro */
+  font-family: var(--font-main);
+  background: var(--grad-default);
+  background-attachment: fixed;
+  color: var(--text-primary);
+  min-height: 100vh;
+  line-height: 1.6;
+  overflow-x: hidden;
+  /* TEMA: CSS Avanzado — transición suave del fondo */
+  transition: background var(--transition-slow);
+}
+
+/* TEMA: CSS Base — selectores semánticos */
+img {
+  max-width: 100%;
+  display: block;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+  border: none;
+  outline: none;
+}
+
+/* ── FONDOS DINÁMICOS POR CLIMA ────────────────────────────── */
+/* TEMA: CSS Avanzado — clases dinámicas según condición del clima */
+.bg-default { background: var(--grad-default); }
+.bg-clear   { background: var(--grad-clear); }
+.bg-clouds  { background: var(--grad-clouds); }
+.bg-rain    { background: var(--grad-rain); }
+.bg-thunderstorm { background: var(--grad-thunderstorm); }
+.bg-snow    { background: var(--grad-snow); }
+.bg-fog     { background: var(--grad-fog); }
+
+/* ── PARTÍCULAS DECORATIVAS ────────────────────────────────── */
+/* TEMA: CSS Avanzado — pseudo-elementos con animación */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 20%, rgba(99, 102, 241, 0.12) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 80%, rgba(6, 182, 212, 0.08) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── LAYOUT PRINCIPAL ──────────────────────────────────────── */
+/* TEMA: Layouts CSS — CSS Grid para la estructura de la app */
+.app-wrapper {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  min-height: 100vh;
+}
+
+/* ── HEADER ────────────────────────────────────────────────── */
+/* TEMA: HTML semántico — <header> */
+/* TEMA: Layouts CSS — Flexbox */
+.app-header {
+  padding: 1.5rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  background: var(--bg-glass);
+}
+
+.app-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.app-logo-icon {
+  font-size: 2rem;
+  /* TEMA: CSS Avanzado — animación flotante */
+  animation: float 3s ease-in-out infinite;
+}
+
+.app-logo-text {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--primary-light), var(--accent-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.app-logo-sub {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.app-badge {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 0.35rem 0.85rem;
+  border-radius: 100px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+}
+
+/* ── MAIN CONTENT ──────────────────────────────────────────── */
+/* TEMA: HTML semántico — <main> */
+main {
+  padding: 2.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* ── SECCIÓN DE BÚSQUEDA ───────────────────────────────────── */
+/* TEMA: HTML semántico — <section> y <form> */
+.search-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.search-title {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  font-weight: 800;
+  text-align: center;
+  background: linear-gradient(135deg, #e2e8f0, #94a3b8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.2;
+  margin-bottom: 0.5rem;
+}
+
+.search-subtitle {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+/* TEMA: CSS Avanzado — glassmorphism en el formulario */
+.search-form {
+  display: flex;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 600px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 0.5rem;
+  /* TEMA: CSS Avanzado — sombra suave y backdrop-filter */
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: var(--shadow-md);
+  /* TEMA: CSS Avanzado — transición al focus */
+  transition: border-color var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.search-form:focus-within {
+  border-color: var(--border-focus);
+  box-shadow: var(--shadow-md), var(--shadow-glow);
+}
+
+/* TEMA: CSS Avanzado — input estilizado */
+.search-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: var(--font-main);
+  font-size: 1rem;
+  color: var(--text-primary);
+  padding: 0.75rem 1rem;
+}
+
+.search-input::placeholder {
+  color: var(--text-muted);
+}
+
+/* TEMA: CSS Avanzado — botón con gradiente y hover effect */
+.search-btn {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 0.75rem 1.75rem;
+  border-radius: var(--radius-lg);
+  letter-spacing: 0.03em;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  /* TEMA: CSS Avanzado — transición en hover */
+  transition:
+    transform var(--transition-fast),
+    box-shadow var(--transition-normal),
+    background var(--transition-normal);
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+}
+
+/* TEMA: CSS Avanzado — hover effect con transformación */
+.search-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(99, 102, 241, 0.5);
+  background: linear-gradient(135deg, var(--primary-light), var(--primary));
+}
+
+.search-btn:active {
+  transform: translateY(0);
+}
+
+/* ── ESTADO DE CARGA — SKELETON ────────────────────────────── */
+/* TEMA: CSS Avanzado — animación skeleton loader */
+/* TEMA: Alpine.js (x-show) — mostrado/ocultado con Alpine */
+.loading-card {
+  width: 100%;
+  max-width: 700px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 2.5rem;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.skeleton-grid {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2rem;
+  align-items: center;
+}
+
+.skeleton-line {
+  height: 16px;
+  border-radius: 8px;
+  background: linear-gradient(90deg, var(--bg-card) 25%, var(--bg-card-hover) 50%, var(--bg-card) 75%);
+  background-size: 200% 100%;
+  /* TEMA: CSS Avanzado — animación shimmer */
+  animation: shimmer 1.5s infinite;
+  margin-bottom: 0.75rem;
+}
+
+.skeleton-line.title    { width: 60%; height: 28px; }
+.skeleton-line.sub      { width: 40%; height: 16px; }
+.skeleton-line.temp     { width: 50%; height: 72px; border-radius: 12px; }
+.skeleton-line.detail   { width: 80%; height: 14px; }
+.skeleton-line.detail2  { width: 65%; height: 14px; }
+.skeleton-circle {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: linear-gradient(90deg, var(--bg-card) 25%, var(--bg-card-hover) 50%, var(--bg-card) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* ── TARJETA DE CLIMA ──────────────────────────────────────── */
+/* TEMA: HTML semántico — <article> */
+/* TEMA: CSS Avanzado — glassmorphism avanzado */
+.weather-card {
+  width: 100%;
+  max-width: 700px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 2.5rem;
+  /* TEMA: CSS Avanzado — backdrop-filter y sombra */
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  box-shadow: var(--shadow-lg);
+  /* TEMA: CSS Avanzado — animación de entrada */
+  animation: slideUp 0.5s ease;
+  /* TEMA: CSS Avanzado — transición */
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.weather-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg), var(--shadow-glow);
+}
+
+/* TEMA: Layouts CSS — CSS Grid para la tarjeta de clima */
+.weather-grid {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2rem;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.weather-location {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.weather-city {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1.1;
+}
+
+.weather-country {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.weather-temp {
+  font-family: var(--font-display);
+  font-size: 5rem;
+  font-weight: 800;
+  line-height: 1;
+  background: linear-gradient(135deg, var(--text-primary), var(--text-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.weather-icon-wrap {
+  text-align: center;
+}
+
+.weather-icon {
+  width: 120px;
+  height: 120px;
+  /* TEMA: CSS Avanzado — filtro y animación flotante */
+  filter: drop-shadow(0 0 20px rgba(99, 102, 241, 0.4));
+  animation: float 4s ease-in-out infinite;
+}
+
+.weather-description {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  text-transform: capitalize;
+  margin-bottom: 1.5rem;
+}
+
+/* TEMA: Layouts CSS — Flexbox para detalles del clima */
+/* TEMA: CSS Avanzado — grid responsive para detalles */
+.weather-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem;
+}
+
+/* TEMA: CSS Avanzado — tarjetas de detalle con glassmorphism */
+.detail-card {
+  background: var(--bg-glass);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  /* TEMA: CSS Avanzado — transición en hover */
+  transition: background var(--transition-normal), transform var(--transition-fast);
+}
+
+.detail-card:hover {
+  background: var(--bg-card-hover);
+  transform: translateY(-2px);
+}
+
+.detail-icon {
+  font-size: 1.25rem;
+}
+
+.detail-label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+}
+
+.detail-value {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.feels-like-note {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 0.5rem;
+}
+
+/* ── MENSAJE DE ERROR ──────────────────────────────────────── */
+/* TEMA: Alpine.js (x-show) — visible solo cuando hasError = true */
+.error-card {
+  width: 100%;
+  max-width: 700px;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  border-radius: var(--radius-xl);
+  padding: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  /* TEMA: CSS Avanzado — animación de entrada */
+  animation: slideUp 0.4s ease;
+}
+
+.error-icon {
+  font-size: 2.5rem;
+  flex-shrink: 0;
+}
+
+.error-title {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fca5a5;
+  margin-bottom: 0.35rem;
+}
+
+.error-message {
+  font-size: 0.9rem;
+  color: #f87171;
+  line-height: 1.5;
+}
+
+/* ── HISTORIAL DE BÚSQUEDAS ─────────────────────────────────  */
+/* TEMA: HTML semántico — <section> */
+/* TEMA: Alpine.js (x-for) — renderizado del historial */
+.history-section {
+  width: 100%;
+  max-width: 700px;
+}
+
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.history-title {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.clear-btn {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  background: transparent;
+  border: 1px solid var(--border);
+  padding: 0.3rem 0.8rem;
+  border-radius: 100px;
+  /* TEMA: CSS Avanzado — transición en hover */
+  transition: color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.clear-btn:hover {
+  color: #f87171;
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
+/* TEMA: Layouts CSS — Flexbox en historial */
+.history-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  list-style: none;
+}
+
+/* TEMA: CSS Avanzado — chips del historial con hover + transición */
+.history-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 100px;
+  cursor: pointer;
+  /* TEMA: CSS Avanzado — transición */
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast),
+    border-color var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.history-chip:hover {
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+  border-color: var(--primary-light);
+  transform: translateY(-2px);
+}
+
+.history-chip-icon {
+  font-size: 0.9rem;
+}
+
+/* ── FOOTER ─────────────────────────────────────────────────── */
+/* TEMA: HTML semántico — <footer> */
+.app-footer {
+  text-align: center;
+  padding: 1.5rem 2rem;
+  border-top: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  background: var(--bg-glass);
+}
+
+.footer-links {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 0.5rem;
+}
+
+.footer-link {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  /* TEMA: CSS Avanzado — transición en hover */
+  transition: color var(--transition-fast);
+}
+
+.footer-link:hover {
+  color: var(--primary-light);
+}
+
+/* ── SPINNER DE CARGA ────────────────────────────────────────── */
+/* TEMA: CSS Avanzado — spinner animado */
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  /* TEMA: CSS Avanzado — animación de rotación */
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+/* ── ANIMACIONES ─────────────────────────────────────────────── */
+/* TEMA: CSS Avanzado — keyframes con animaciones */
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-8px); }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.5; }
+}
+
+/* ── [x-cloak] — ocultar mientras Alpine carga ───────────────── */
+/* TEMA: Alpine.js — x-cloak evita el flash de contenido sin Alpine */
+[x-cloak] {
+  display: none !important;
+}
+
+/* ── RESPONSIVE DESIGN ───────────────────────────────────────── */
+/* TEMA: CSS Base — Responsive Design con media queries */
+@media (max-width: 768px) {
+  .app-header {
+    padding: 1rem 1.25rem;
+  }
+
+  .app-logo-text {
+    font-size: 1.2rem;
+  }
+
+  .app-badge {
+    display: none;
+  }
+
+  main {
+    padding: 1.5rem 1.25rem;
+  }
+
+  .search-title {
+    font-size: 1.8rem;
+  }
+
+  .search-form {
+    flex-direction: column;
+    border-radius: var(--radius-lg);
+  }
+
+  .search-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .weather-grid {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .weather-icon-wrap {
+    order: -1;
+  }
+
+  .weather-temp {
+    font-size: 4rem;
+  }
+
+  .weather-city {
+    font-size: 1.6rem;
+  }
+
+  .weather-details {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .loading-card,
+  .weather-card,
+  .error-card,
+  .history-section {
+    border-radius: var(--radius-lg);
+  }
+}
+
+@media (max-width: 480px) {
+  .weather-details {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .error-card {
+    flex-direction: column;
+    text-align: center;
+  }
+}

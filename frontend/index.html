@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<!-- ============================================================
+  TEMA: HTML — estructura semántica completa
+  TEMA: Alpine.js — x-data, x-model, x-show, x-for, x-text, x-bind, @click, @keyup.enter
+  TEMA: Módulos ESM — script type="module"
+  Grupo G9 - Desarrollo Web
+  ============================================================ -->
+<html lang="es">
+
+<head>
+  <!-- TEMA: HTML — metadatos para SEO y responsive -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description"
+    content="AppClima — Consulta el clima en tiempo real de cualquier ciudad del mundo. Desarrollado con Alpine.js, Node.js y Express. Grupo G9." />
+  <meta name="keywords" content="clima, weather, Alpine.js, Node.js, Express, OpenWeatherMap, Grupo G9" />
+  <meta name="author" content="Grupo G9 - Desarrollo Web" />
+
+  <!-- Open Graph para redes sociales -->
+  <meta property="og:title" content="AppClima — Clima en Tiempo Real" />
+  <meta property="og:description"
+    content="Consulta el clima de cualquier ciudad con Alpine.js y OpenWeatherMap." />
+  <meta property="og:type" content="website" />
+
+  <title>AppClima 🌤️ — Clima en Tiempo Real | Grupo G9</title>
+
+  <!-- TEMA: CSS Base — enlazar hoja de estilos externa -->
+  <link rel="stylesheet" href="./css/styles.css" />
+
+  <!-- Favicon emoji -->
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌤️</text></svg>" />
+
+
+</head>
+
+<body>
+
+  <!-- ====================================================
+    TEMA: Alpine.js (x-data) — inicializar el componente global
+    weatherApp() viene de js/app.js (registrado con Alpine.data)
+    x-cloak oculta el contenido hasta que Alpine termine de inicializar
+    TEMA: CSS Avanzado — clase dinámica para fondo según clima
+    ==================================================== -->
+  <div class="app-wrapper" x-data="weatherApp()" x-cloak x-bind:class="weatherClass">
+
+    <!-- ================================================
+      TEMA: HTML semántico — <header> para cabecera
+      ================================================ -->
+    <header class="app-header">
+      <div class="app-logo">
+        <span class="app-logo-icon" aria-hidden="true">🌤️</span>
+        <div>
+          <div class="app-logo-text">AppClima</div>
+          <div class="app-logo-sub">Clima en Tiempo Real</div>
+        </div>
+      </div>
+      <span class="app-badge">Alpine.js · G9</span>
+    </header>
+
+    <!-- ================================================
+      TEMA: HTML semántico — <main> para contenido principal
+      ================================================ -->
+    <main>
+
+      <!-- ============================================
+        TEMA: HTML semántico — <section> de búsqueda
+        ============================================ -->
+      <section class="search-section" aria-label="Buscador de ciudades">
+
+        <h1 class="search-title">¿Cómo está el clima?</h1>
+        <p class="search-subtitle">Busca cualquier ciudad del mundo</p>
+
+        <!-- ==========================================
+          TEMA: HTML semántico — <form> de búsqueda
+          TEMA: Eventos — @submit.prevent evita recarga de página
+          TEMA: Alpine.js (x-on) — manejo de evento submit
+          ========================================== -->
+        <form class="search-form"
+          role="search"
+          @submit.prevent="search()"
+          aria-label="Formulario de búsqueda de ciudad">
+
+          <!-- ========================================
+            TEMA: Alpine.js (x-model) — binding bidireccional con searchQuery
+            TEMA: Eventos (@keyup.enter) — buscar al presionar Enter
+            ======================================== -->
+          <input
+            id="search-input"
+            type="text"
+            class="search-input"
+            placeholder="Ej: San José, Madrid, Nueva York..."
+            x-model="searchQuery"
+            @keyup.enter="search()"
+            autocomplete="off"
+            aria-label="Nombre de la ciudad"
+            maxlength="100"
+          />
+
+          <!-- ========================================
+            TEMA: Eventos (@click) — buscar al hacer clic
+            TEMA: Alpine.js (x-show) — mostrar spinner o texto según estado
+            ======================================== -->
+          <button
+            id="search-btn"
+            type="submit"
+            class="search-btn"
+            @click.prevent="search()"
+            :disabled="loading"
+            aria-label="Buscar ciudad">
+
+            <!-- Spinner mientras carga -->
+            <!-- TEMA: Alpine.js (x-show) — mostrar spinner durante carga -->
+            <span class="spinner" x-show="loading" aria-hidden="true"></span>
+
+            <!-- Icono de búsqueda cuando no carga -->
+            <span x-show="!loading" aria-hidden="true">🔍</span>
+            <span x-text="loading ? 'Buscando...' : 'Buscar'"></span>
+          </button>
+        </form>
+
+      </section>
+
+      <!-- ============================================
+        TEMA: Alpine.js (x-show) — mostrar Skeleton Loader
+        TEMA: CSS Avanzado — animación shimmer del skeleton
+        TEMA: HTML semántico — rol para accesibilidad
+        ============================================ -->
+      <div
+        class="loading-card"
+        x-show="loading"
+        x-cloak
+        role="status"
+        aria-label="Cargando datos del clima"
+        aria-live="polite">
+
+        <div class="skeleton-grid">
+          <div>
+            <div class="skeleton-line title" aria-hidden="true"></div>
+            <div class="skeleton-line sub"   aria-hidden="true"></div>
+            <div class="skeleton-line temp"  aria-hidden="true"></div>
+            <div class="skeleton-line detail"  aria-hidden="true"></div>
+            <div class="skeleton-line detail2" aria-hidden="true"></div>
+          </div>
+          <div>
+            <div class="skeleton-circle" aria-hidden="true"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================
+        TEMA: Alpine.js (x-show) — mostrar error si hasError = true
+        TEMA: HTML semántico — <section> semántica para errores
+        TEMA: CSS Avanzado — animación slideUp al aparecer
+        ============================================ -->
+      <section
+        class="error-card"
+        x-show="hasError && !loading"
+        x-cloak
+        role="alert"
+        aria-live="assertive"
+        aria-label="Error al consultar el clima">
+
+        <div class="error-icon" aria-hidden="true">⚠️</div>
+        <div>
+          <div class="error-title">No se pudo obtener el clima</div>
+          <!-- TEMA: Alpine.js (x-text) — mostrar mensaje de error reactivamente -->
+          <p class="error-message" x-text="errorMessage"></p>
+        </div>
+      </section>
+
+      <!-- ============================================
+        TEMA: HTML semántico — <article> para la tarjeta de clima
+        TEMA: Alpine.js (x-show) — visible cuando hay datos del clima
+        TEMA: CSS Avanzado — glassmorphism, animación slideUp
+        ============================================ -->
+      <article
+        class="weather-card"
+        x-show="weather && !loading"
+        x-cloak
+        aria-label="Información actual del clima">
+
+        <!-- TEMA: Layouts CSS — CSS Grid para organizar la tarjeta -->
+        <div class="weather-grid">
+
+          <!-- Columna izquierda: ciudad y temperatura -->
+          <div class="weather-location">
+
+            <!-- TEMA: Alpine.js (x-text) — nombre de la ciudad reactivo -->
+            <h2
+              class="weather-city"
+              x-text="weather ? weather.city : ''"
+              aria-label="Ciudad"></h2>
+
+            <!-- TEMA: Alpine.js (x-text) — país reactivo -->
+            <p
+              class="weather-country"
+              x-text="weather ? '📍 ' + weather.country : ''"
+              aria-label="País"></p>
+
+            <!-- TEMA: Alpine.js (x-text) — temperatura computada y formateada -->
+            <div
+              class="weather-temp"
+              x-text="tempFormatted"
+              aria-label="Temperatura actual"></div>
+          </div>
+
+          <!-- Columna derecha: ícono del clima -->
+          <div class="weather-icon-wrap">
+            <!-- TEMA: Alpine.js (x-bind) — src dinámico del ícono -->
+            <img
+              class="weather-icon"
+              x-bind:src="iconUrl"
+              x-bind:alt="weather ? weather.description : 'Ícono del clima'"
+              aria-label="Ícono del clima"
+            />
+          </div>
+        </div>
+
+        <!-- TEMA: Alpine.js (x-text) — descripción del clima -->
+        <p
+          class="weather-description"
+          x-text="weather ? '🌡️ ' + weather.description : ''"
+          aria-label="Descripción del clima"></p>
+
+        <!-- ==========================================
+          TEMA: Layouts CSS — CSS Grid responsive para detalles
+          TEMA: Alpine.js (x-text) — datos reactivos en cada detalle
+          ========================================== -->
+        <div class="weather-details" role="list" aria-label="Detalles del clima">
+
+          <!-- Humedad -->
+          <div class="detail-card" role="listitem">
+            <span class="detail-icon" aria-hidden="true">💧</span>
+            <span class="detail-label">Humedad</span>
+            <!-- TEMA: Alpine.js (x-text) — humedad reactiva -->
+            <span class="detail-value"
+              x-text="weather ? weather.humidity + '%' : ''"
+              aria-label="Humedad relativa"></span>
+          </div>
+
+          <!-- Viento -->
+          <div class="detail-card" role="listitem">
+            <span class="detail-icon" aria-hidden="true">💨</span>
+            <span class="detail-label">Viento</span>
+            <!-- TEMA: Alpine.js (x-text) — velocidad del viento formateada -->
+            <span class="detail-value"
+              x-text="windFormatted"
+              aria-label="Velocidad del viento"></span>
+          </div>
+
+          <!-- Sensación Térmica -->
+          <div class="detail-card" role="listitem">
+            <span class="detail-icon" aria-hidden="true">🌡️</span>
+            <span class="detail-label">Sensación</span>
+            <span class="detail-value"
+              x-text="weather ? weather.feelsLike + '°C' : ''"
+              aria-label="Sensación térmica"></span>
+          </div>
+
+          <!-- Presión -->
+          <div class="detail-card" role="listitem">
+            <span class="detail-icon" aria-hidden="true">📊</span>
+            <span class="detail-label">Presión</span>
+            <span class="detail-value"
+              x-text="weather ? weather.pressure + ' hPa' : ''"
+              aria-label="Presión atmosférica"></span>
+          </div>
+
+          <!-- Visibilidad -->
+          <div class="detail-card" role="listitem" x-show="weather && weather.visibility !== null">
+            <span class="detail-icon" aria-hidden="true">👁️</span>
+            <span class="detail-label">Visibilidad</span>
+            <span class="detail-value"
+              x-text="weather && weather.visibility !== null ? weather.visibility + ' km' : ''"
+              aria-label="Visibilidad"></span>
+          </div>
+
+        </div>
+
+        <!-- Nota de sensación térmica -->
+        <p class="feels-like-note"
+          x-show="weather"
+          x-text="weather ? 'Actualizado el ' + new Date(weather.timestamp * 1000).toLocaleString('es-CR') : ''">
+        </p>
+
+      </article>
+
+      <!-- ============================================
+        TEMA: HTML semántico — <section> del historial
+        TEMA: Alpine.js (x-show) — visible cuando hay historial
+        TEMA: Alpine.js (x-for) — renderizar lista del historial
+        TEMA: Eventos (@click) — buscar desde historial
+        ============================================ -->
+      <section
+        class="history-section"
+        x-show="history.length > 0"
+        x-cloak
+        aria-label="Historial de búsquedas">
+
+        <div class="history-header">
+          <h3 class="history-title">🕐 Búsquedas recientes</h3>
+
+          <!-- TEMA: Eventos (@click) — limpiar historial -->
+          <button
+            class="clear-btn"
+            @click="clearHistory()"
+            id="clear-history-btn"
+            type="button"
+            aria-label="Limpiar historial de búsquedas">
+            Limpiar
+          </button>
+        </div>
+
+        <!-- TEMA: Alpine.js (x-for) — iterar sobre el historial de ciudades -->
+        <ul class="history-list" role="list" aria-label="Lista de ciudades recientes">
+
+          <!-- TEMA: Alpine.js (x-for) — directiva de bucle con key único -->
+          <template x-for="(city, index) in history" :key="city">
+            <li>
+              <!-- TEMA: Eventos (@click) — buscar ciudad del historial al hacer clic -->
+              <!-- TEMA: Alpine.js (x-text) — mostrar nombre de ciudad reactivamente -->
+              <button
+                class="history-chip"
+                @click="searchFromHistory(city)"
+                type="button"
+                :id="'history-chip-' + index"
+                :aria-label="'Buscar nuevamente: ' + city">
+
+                <span class="history-chip-icon" aria-hidden="true">🌍</span>
+                <!-- TEMA: Alpine.js (x-text) — nombre de la ciudad -->
+                <span x-text="city"></span>
+              </button>
+            </li>
+          </template>
+
+        </ul>
+      </section>
+
+    </main>
+
+    <!-- ================================================
+      TEMA: HTML semántico — <footer> del sitio
+      ================================================ -->
+    <footer class="app-footer">
+      <p>
+        &copy; 2025 <strong>AppClima</strong> · Grupo G9 · Desarrollo Web
+        · Datos de <a href="https://openweathermap.org" target="_blank" rel="noopener" class="footer-link">OpenWeatherMap</a>
+      </p>
+      <nav class="footer-links" aria-label="Links del footer">
+        <a href="https://alpinejs.dev" target="_blank" rel="noopener" class="footer-link">Alpine.js</a>
+        <a href="https://expressjs.com" target="_blank" rel="noopener" class="footer-link">Express</a>
+        <a href="https://openweathermap.org/api" target="_blank" rel="noopener" class="footer-link">API</a>
+      </nav>
+    </footer>
+
+  </div><!-- /app-wrapper / x-data -->
+
+  <!-- ====================================================
+    TEMA: Módulos ESM — app.js como module (habilita import/export)
+    TEMA: Alpine.js — carga ordenada: app.js ANTES de Alpine CDN
+    
+    Ambos scripts tienen defer. Los scripts defer se ejecutan EN ORDEN
+    después de que el DOM está listo. Por lo tanto:
+    1. app.js se ejecuta primero → registra el listener 'alpine:init'
+    2. Alpine CDN se ejecuta después → dispara 'alpine:init'
+    3. El componente weatherApp ya está registrado y Alpine lo encuentra
+    ==================================================== -->
+  <script type="module" src="./js/app.js" defer></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+</body>
+</html>
