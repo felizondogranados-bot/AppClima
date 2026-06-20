@@ -49,3 +49,59 @@ export const getWeather = async (city) => {
     throw error;
   }
 };
+
+/**
+ * TEMA: Asincronía — función async que obtiene el clima por coordenadas
+ * Se usa cuando el usuario selecciona una sugerencia (ya tenemos lat/lon)
+ * para evitar hacer geocodificación innecesaria.
+ * @param {{ latitude, longitude, name, countryCode }} suggestion
+ * @returns {Promise<Object>} Datos del clima
+ */
+export const getWeatherByCoords = async ({ latitude, longitude, name, countryCode }) => {
+  try {
+    const params = new URLSearchParams({
+      lat: latitude,
+      lon: longitude,
+      name: name || '',
+      country: countryCode || ''
+    });
+    const response = await fetch(`${BASE_URL}/api/weather-coords?${params}`);
+    const data = await response.json();
+
+    if (!response.ok || data.error) {
+      throw {
+        status: response.status,
+        message: data.message || 'Error desconocido al consultar el clima.',
+        code: data.code || 'UNKNOWN_ERROR'
+      };
+    }
+    return data;
+  } catch (error) {
+    if (error instanceof TypeError) {
+      throw {
+        status: 0,
+        message: 'Sin conexión a internet. Verifica tu red e intenta de nuevo.',
+        code: 'NETWORK_ERROR'
+      };
+    }
+    throw error;
+  }
+};
+
+/**
+ * TEMA: Asincronía — función async que obtiene sugerencias de ciudades
+ * TEMA: Módulos ESM — exportada para ser usada en app.js
+ * @param {string} query - Texto parcial ingresado por el usuario
+ * @returns {Promise<Array>} Lista de sugerencias
+ */
+export const getSuggestions = async (query) => {
+  if (!query || query.trim().length < 2) return [];
+  try {
+    const response = await fetch(`${BASE_URL}/api/suggestions/${encodeURIComponent(query.trim())}`);
+    const data = await response.json();
+    return data.suggestions || [];
+  } catch {
+    // Silenciar errores — no interrumpen la experiencia del usuario
+    return [];
+  }
+};

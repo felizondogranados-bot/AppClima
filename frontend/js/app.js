@@ -8,7 +8,7 @@
 // ============================================================
 
 // TEMA: Módulos ESM — importar funciones del servicio de clima
-import { getWeather } from '../services/weatherService.js';
+import { getWeather, getSuggestions, getWeatherByCoords } from '../services/weatherService.js';
 
 // TEMA: Módulos ESM — importar funciones utilitarias
 import {
@@ -51,6 +51,16 @@ const weatherApp = () => ({
 
   /** Ciudad por defecto al iniciar la aplicación */
   defaultCity: 'San Jose,CR',
+
+  // ── Estado del autocompletado ──────────────────────────────
+  /** Lista de sugerencias de ciudades */
+  suggestions: [],
+
+  /** Si el dropdown de sugerencias está visible */
+  showSuggestions: false,
+
+  /** Timer para debounce del autocompletado */
+  _debounceTimer: null,
 
   // ── Propiedades computadas ─────────────────────────────────
 
@@ -166,6 +176,84 @@ const weatherApp = () => ({
   async searchFromHistory(city) {
     this.searchQuery = city;
     await this.fetchWeather(city);
+  },
+
+  // ── Autocompletado ─────────────────────────────────────────
+
+  /**
+   * TEMA: Rendimiento Web — debounce para no llamar la API en cada tecla
+   * Se llama desde @input en el campo de búsqueda
+   * Espera 300 ms después de que el usuario deja de escribir
+   */
+  onInput() {
+    // TEMA: JavaScript Avanzado — limpiar el timer anterior
+    clearTimeout(this._debounceTimer);
+
+    const q = this.searchQuery.trim();
+
+    if (q.length < 2) {
+      this.suggestions = [];
+      this.showSuggestions = false;
+      return;
+    }
+
+    // TEMA: Asincronía — setTimeout como debounce (300 ms)
+    this._debounceTimer = setTimeout(async () => {
+      // TEMA: Módulos ESM — uso de getSuggestions importado
+      this.suggestions = await getSuggestions(q);
+      this.showSuggestions = this.suggestions.length > 0;
+    }, 300);
+  },
+
+  /**
+   * Selecciona una sugerencia del dropdown y busca el clima
+   * TEMA: Rendimiento Web — usa coordenadas directamente,
+   * evitando una segunda geocodificación innecesaria.
+   * @param {{ name, countryCode, region, country, latitude, longitude, display }} s
+   */
+  async selectSuggestion(s) {
+    // Mostrar el nombre limpio en el input
+    this.searchQuery = s.display;
+    this.closeSuggestions();
+
+    if (this.loading) return;
+    this.loading = true;
+    this.hasError = false;
+    this.errorMessage = '';
+
+    try {
+      // TEMA: Asincronía — llamada directa por coordenadas (sin geocodificación)
+      // TEMA: Módulos ESM — uso de getWeatherByCoords importado
+      const data = await getWeatherByCoords({
+        latitude:    s.latitude,
+        longitude:   s.longitude,
+        name:        s.name,
+        countryCode: s.countryCode
+      });
+
+      this.weather = data;
+
+      // TEMA: JavaScript Avanzado — spread operator en addToHistory
+      this.history = addToHistory(this.history, data.city);
+      saveHistoryToStorage(this.history);
+
+      // Limpiar el input tras búsqueda exitosa
+      this.searchQuery = '';
+
+    } catch (error) {
+      this.hasError = true;
+      this.errorMessage = error.message || 'Error al consultar el servicio meteorológico.';
+    } finally {
+      this.loading = false;
+    }
+  },
+
+  /**
+   * Cierra el dropdown de sugerencias
+   */
+  closeSuggestions() {
+    this.showSuggestions = false;
+    this.suggestions = [];
   },
 
   /**

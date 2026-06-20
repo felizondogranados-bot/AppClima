@@ -76,50 +76,100 @@
           TEMA: Eventos — @submit.prevent evita recarga de página
           TEMA: Alpine.js (x-on) — manejo de evento submit
           ========================================== -->
-        <form class="search-form"
-          role="search"
-          @submit.prevent="search()"
-          aria-label="Formulario de búsqueda de ciudad">
+        <!-- TEMA: CSS Avanzado — posición relativa para el dropdown absoluto -->
+        <div class="search-wrapper" @click.away="closeSuggestions()">
 
-          <!-- ========================================
-            TEMA: Alpine.js (x-model) — binding bidireccional con searchQuery
-            TEMA: Eventos (@keyup.enter) — buscar al presionar Enter
-            ======================================== -->
-          <input
-            id="search-input"
-            type="text"
-            class="search-input"
-            placeholder="Ej: San José, Madrid, Nueva York..."
-            x-model="searchQuery"
-            @keyup.enter="search()"
-            autocomplete="off"
-            aria-label="Nombre de la ciudad"
-            maxlength="100"
-          />
+          <form class="search-form"
+            role="search"
+            @submit.prevent="search(); closeSuggestions()"
+            aria-label="Formulario de búsqueda de ciudad">
 
-          <!-- ========================================
-            TEMA: Eventos (@click) — buscar al hacer clic
-            TEMA: Alpine.js (x-show) — mostrar spinner o texto según estado
-            ======================================== -->
-          <button
-            id="search-btn"
-            type="submit"
-            class="search-btn"
-            @click.prevent="search()"
-            :disabled="loading"
-            aria-label="Buscar ciudad">
+            <!-- ========================================
+              TEMA: Alpine.js (x-model) — binding bidireccional con searchQuery
+              TEMA: Eventos (@input) — dispara autocompletado con debounce
+              ======================================== -->
+            <input
+              id="search-input"
+              type="text"
+              class="search-input"
+              placeholder="Ej: San José, Madrid, Nueva York..."
+              x-model="searchQuery"
+              @input="onInput()"
+              @keydown.escape="closeSuggestions()"
+              @keyup.enter="search(); closeSuggestions()"
+              autocomplete="off"
+              aria-label="Nombre de la ciudad"
+              aria-autocomplete="list"
+              aria-controls="suggestions-list"
+              maxlength="100"
+            />
 
-            <!-- Spinner mientras carga -->
-            <!-- TEMA: Alpine.js (x-show) — mostrar spinner durante carga -->
-            <span class="spinner" x-show="loading" aria-hidden="true"></span>
+            <!-- ========================================
+              TEMA: Eventos (@click) — buscar al hacer clic
+              TEMA: Alpine.js (x-show) — mostrar spinner o texto según estado
+              ======================================== -->
+            <button
+              id="search-btn"
+              type="submit"
+              class="search-btn"
+              @click.prevent="search(); closeSuggestions()"
+              :disabled="loading"
+              aria-label="Buscar ciudad">
 
-            <!-- Icono de búsqueda cuando no carga -->
-            <span x-show="!loading" aria-hidden="true">🔍</span>
-            <span x-text="loading ? 'Buscando...' : 'Buscar'"></span>
-          </button>
-        </form>
+              <!-- Spinner mientras carga -->
+              <!-- TEMA: Alpine.js (x-show) — mostrar spinner durante carga -->
+              <span class="spinner" x-show="loading" aria-hidden="true"></span>
+
+              <!-- Icono de búsqueda cuando no carga -->
+              <span x-show="!loading" aria-hidden="true">🔍</span>
+              <span x-text="loading ? 'Buscando...' : 'Buscar'"></span>
+            </button>
+          </form>
+
+          <!-- ==========================================
+            TEMA: Alpine.js (x-show / x-for) — dropdown de sugerencias
+            TEMA: CSS Avanzado — posición absoluta debajo del input
+            ========================================== -->
+          <ul
+            id="suggestions-list"
+            class="suggestions-dropdown"
+            x-show="showSuggestions"
+            x-cloak
+            role="listbox"
+            aria-label="Sugerencias de ciudades">
+
+            <!-- TEMA: Alpine.js (x-for) — iterar sugerencias -->
+            <template x-for="(s, i) in suggestions" :key="i">
+              <li role="option">
+                <!-- TEMA: Eventos (@click / @mousedown) — seleccionar sugerencia -->
+                <!-- mousedown antes del blur para que el click se registre -->
+                <button
+                  type="button"
+                  class="suggestion-item"
+                  :id="'suggestion-' + i"
+                  @mousedown.prevent="selectSuggestion(s)"
+                  :aria-label="'Seleccionar ' + s.display">
+
+                  <span class="suggestion-icon" aria-hidden="true">📍</span>
+                  <span class="suggestion-text">
+                    <!-- Nombre principal -->
+                    <span class="suggestion-name" x-text="s.name"></span>
+                    <!-- Región y país -->
+                    <span class="suggestion-region"
+                      x-text="[s.region, s.country].filter(Boolean).join(', ')">
+                    </span>
+                  </span>
+                  <!-- Código de país -->
+                  <span class="suggestion-country-code" x-text="s.countryCode"></span>
+                </button>
+              </li>
+            </template>
+          </ul>
+
+        </div><!-- /search-wrapper -->
 
       </section>
+
 
       <!-- ============================================
         TEMA: Alpine.js (x-show) — mostrar Skeleton Loader

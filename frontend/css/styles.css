@@ -768,3 +768,104 @@ main {
     text-align: center;
   }
 }
+
+/* ── AUTOCOMPLETADO — WRAPPER Y DROPDOWN ─────────────────────── */
+/* TEMA: CSS Avanzado — posicionamiento absoluto relativo al wrapper */
+
+.search-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+}
+
+/* TEMA: CSS Avanzado — dropdown glassmorphism */
+.suggestions-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  background: rgba(15, 15, 30, 0.95);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  box-shadow: var(--shadow-lg), 0 0 0 1px rgba(99, 102, 241, 0.1);
+  list-style: none;
+  overflow: hidden;
+  z-index: 100;
+  /* TEMA: CSS Avanzado — animación de entrada */
+  animation: slideUp 0.18s ease;
+}
+
+/* TEMA: CSS Avanzado — cada ítem de sugerencia */
+.suggestion-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  text-align: left;
+  cursor: pointer;
+  /* TEMA: CSS Avanzado — transición suave en hover */
+  transition: background var(--transition-fast), color var(--transition-fast);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.suggestion-item:last-child {
+  border-bottom: none;
+}
+
+/* TEMA: CSS Avanzado — hover effect con acento de color */
+.suggestion-item:hover {
+  background: rgba(99, 102, 241, 0.12);
+  color: var(--text-primary);
+}
+
+.suggestion-icon {
+  font-size: 0.85rem;
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+/* TEMA: Layouts CSS — Flexbox vertical para nombre + región */
+.suggestion-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.suggestion-name {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 0.92rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.suggestion-region {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Código de país al extremo derecho */
+.suggestion-country-code {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--primary-light);
+  background: rgba(99, 102, 241, 0.15);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+
