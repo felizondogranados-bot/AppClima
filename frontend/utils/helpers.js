@@ -70,20 +70,33 @@ export const addToHistory = (history, city) => {
 };
 
 /**
- * TEMA: JavaScript Avanzado — destructuring del objeto de clima
+ * TEMA: JavaScript Avanzado — mapeo de clima por icono
  * Determina el fondo degradado según el clima
- * @param {number} weatherId - ID del estado del clima OWM
+ * @param {string} icon - Código del ícono del clima
  * @returns {string} Clase CSS para el fondo
  */
-export const getWeatherClass = (weatherId) => {
-  if (!weatherId) return 'bg-default';
-  if (weatherId >= 200 && weatherId < 300) return 'bg-thunderstorm';
-  if (weatherId >= 300 && weatherId < 600) return 'bg-rain';
-  if (weatherId >= 600 && weatherId < 700) return 'bg-snow';
-  if (weatherId >= 700 && weatherId < 800) return 'bg-fog';
-  if (weatherId === 800) return 'bg-clear';
-  if (weatherId > 800) return 'bg-clouds';
-  return 'bg-default';
+export const getWeatherClass = (icon) => {
+  if (!icon) return 'bg-default';
+  const prefix = icon.slice(0, 2);
+  switch (prefix) {
+    case '01':
+      return 'bg-clear';
+    case '02':
+    case '03':
+    case '04':
+      return 'bg-clouds';
+    case '09':
+    case '10':
+      return 'bg-rain';
+    case '11':
+      return 'bg-thunderstorm';
+    case '13':
+      return 'bg-snow';
+    case '50':
+      return 'bg-fog';
+    default:
+      return 'bg-default';
+  }
 };
 
 /**

@@ -50,43 +50,7 @@ export const getWeather = async (city) => {
   }
 };
 
-/**
- * TEMA: Asincronía — función async que obtiene el clima por coordenadas
- * Se usa cuando el usuario selecciona una sugerencia (ya tenemos lat/lon)
- * para evitar hacer geocodificación innecesaria.
- * @param {{ latitude, longitude, name, countryCode }} suggestion
- * @returns {Promise<Object>} Datos del clima
- */
-export const getWeatherByCoords = async ({ latitude, longitude, name, countryCode }) => {
-  try {
-    const params = new URLSearchParams({
-      lat: latitude,
-      lon: longitude,
-      name: name || '',
-      country: countryCode || ''
-    });
-    const response = await fetch(`${BASE_URL}/api/weather-coords?${params}`);
-    const data = await response.json();
 
-    if (!response.ok || data.error) {
-      throw {
-        status: response.status,
-        message: data.message || 'Error desconocido al consultar el clima.',
-        code: data.code || 'UNKNOWN_ERROR'
-      };
-    }
-    return data;
-  } catch (error) {
-    if (error instanceof TypeError) {
-      throw {
-        status: 0,
-        message: 'Sin conexión a internet. Verifica tu red e intenta de nuevo.',
-        code: 'NETWORK_ERROR'
-      };
-    }
-    throw error;
-  }
-};
 
 /**
  * TEMA: Asincronía — función async que obtiene sugerencias de ciudades

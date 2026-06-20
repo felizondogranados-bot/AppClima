@@ -280,7 +280,7 @@
         <div class="weather-details" role="list" aria-label="Detalles del clima">
 
           <!-- Humedad -->
-          <div class="detail-card" role="listitem">
+          <div class="detail-card detail-humidity" role="listitem">
             <span class="detail-icon" aria-hidden="true">💧</span>
             <span class="detail-label">Humedad</span>
             <!-- TEMA: Alpine.js (x-text) — humedad reactiva -->
@@ -290,7 +290,7 @@
           </div>
 
           <!-- Viento -->
-          <div class="detail-card" role="listitem">
+          <div class="detail-card detail-wind" role="listitem">
             <span class="detail-icon" aria-hidden="true">💨</span>
             <span class="detail-label">Viento</span>
             <!-- TEMA: Alpine.js (x-text) — velocidad del viento formateada -->
@@ -300,7 +300,7 @@
           </div>
 
           <!-- Sensación Térmica -->
-          <div class="detail-card" role="listitem">
+          <div class="detail-card detail-feels" role="listitem">
             <span class="detail-icon" aria-hidden="true">🌡️</span>
             <span class="detail-label">Sensación</span>
             <span class="detail-value"
@@ -309,20 +309,20 @@
           </div>
 
           <!-- Presión -->
-          <div class="detail-card" role="listitem">
+          <div class="detail-card" role="listitem" x-show="weather && weather.pressure !== undefined">
             <span class="detail-icon" aria-hidden="true">📊</span>
             <span class="detail-label">Presión</span>
             <span class="detail-value"
-              x-text="weather ? weather.pressure + ' hPa' : ''"
+              x-text="weather && weather.pressure !== undefined ? weather.pressure + ' hPa' : ''"
               aria-label="Presión atmosférica"></span>
           </div>
 
           <!-- Visibilidad -->
-          <div class="detail-card" role="listitem" x-show="weather && weather.visibility !== null">
+          <div class="detail-card" role="listitem" x-show="weather && weather.visibility !== undefined && weather.visibility !== null">
             <span class="detail-icon" aria-hidden="true">👁️</span>
             <span class="detail-label">Visibilidad</span>
             <span class="detail-value"
-              x-text="weather && weather.visibility !== null ? weather.visibility + ' km' : ''"
+              x-text="weather && weather.visibility !== undefined && weather.visibility !== null ? weather.visibility + ' km' : ''"
               aria-label="Visibilidad"></span>
           </div>
 
@@ -330,8 +330,8 @@
 
         <!-- Nota de sensación térmica -->
         <p class="feels-like-note"
-          x-show="weather"
-          x-text="weather ? 'Actualizado el ' + new Date(weather.timestamp * 1000).toLocaleString('es-CR') : ''">
+          x-show="weather && weather.lastUpdate"
+          x-text="weather ? 'Última actualización: ' + weather.lastUpdate : ''">
         </p>
 
       </article>

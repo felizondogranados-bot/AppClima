@@ -8,7 +8,7 @@
 // ============================================================
 
 // TEMA: Módulos ESM — importar funciones del servicio de clima
-import { getWeather, getSuggestions, getWeatherByCoords } from '../services/weatherService.js';
+import { getWeather, getSuggestions } from '../services/weatherService.js';
 
 // TEMA: Módulos ESM — importar funciones utilitarias
 import {
@@ -71,7 +71,7 @@ const weatherApp = () => ({
 
   /** Clase CSS dinámica según el tipo de clima */
   get weatherClass() {
-    return this.weather ? getWeatherClass(this.weather.weatherId) : 'bg-default';
+    return this.weather ? getWeatherClass(this.weather.icon) : 'bg-default';
   },
 
   /** Temperatura formateada */
@@ -207,45 +207,16 @@ const weatherApp = () => ({
 
   /**
    * Selecciona una sugerencia del dropdown y busca el clima
-   * TEMA: Rendimiento Web — usa coordenadas directamente,
-   * evitando una segunda geocodificación innecesaria.
+   * TEMA: Rendimiento Web — buscar por nombre de ciudad y país
    * @param {{ name, countryCode, region, country, latitude, longitude, display }} s
    */
   async selectSuggestion(s) {
-    // Mostrar el nombre limpio en el input
+    // Mostrar el nombre completo sugerido en el input temporalmente
     this.searchQuery = s.display;
     this.closeSuggestions();
 
-    if (this.loading) return;
-    this.loading = true;
-    this.hasError = false;
-    this.errorMessage = '';
-
-    try {
-      // TEMA: Asincronía — llamada directa por coordenadas (sin geocodificación)
-      // TEMA: Módulos ESM — uso de getWeatherByCoords importado
-      const data = await getWeatherByCoords({
-        latitude:    s.latitude,
-        longitude:   s.longitude,
-        name:        s.name,
-        countryCode: s.countryCode
-      });
-
-      this.weather = data;
-
-      // TEMA: JavaScript Avanzado — spread operator en addToHistory
-      this.history = addToHistory(this.history, data.city);
-      saveHistoryToStorage(this.history);
-
-      // Limpiar el input tras búsqueda exitosa
-      this.searchQuery = '';
-
-    } catch (error) {
-      this.hasError = true;
-      this.errorMessage = error.message || 'Error al consultar el servicio meteorológico.';
-    } finally {
-      this.loading = false;
-    }
+    // Consultar el clima directamente con el nombre y código de país
+    await this.fetchWeather(`${s.name},${s.countryCode}`);
   },
 
   /**
