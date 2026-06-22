@@ -53,7 +53,7 @@ La aplicación demuestra el uso de **Alpine.js** y los conceptos del curso: HTML
 ### Paso 1: Clonar el repositorio
 
 ```bash
-git clone https://github.com/tu-usuario/AppClima.git
+git clone https://github.com/felizondogranados-bot/AppClima.git
 cd AppClima
 ```
 
@@ -74,13 +74,11 @@ cp .env.example .env
 Editar el archivo `.env`:
 
 ```env
-OPENWEATHER_API_KEY=tu_api_key_aqui
+OPENWEATHER_API_KEY=tAPIKEY DE OPEN WEATHER DESPUES DE REGISTRARSE
 PORT=3000
 ```
 
-> ⚠️ **Nunca subas el archivo `.env` al repositorio. Está en `.gitignore`.**
 
----
 
 ## ▶️ Ejecución
 
@@ -171,20 +169,22 @@ OPENWEATHER_API_KEY=abc123def456...
 
 ## 📸 Capturas de Pantalla
 
-> _Insertar capturas aquí después del despliegue_
+A continuación se muestran algunas capturas del funcionamiento de **AppClima**, incluyendo la vista principal, una consulta del clima, la respuesta del backend y el despliegue en producción.
 
-| Vista principal | Error | Historial |
-|---|---|---|
-| ![Vista principal](./screenshots/main.png) | ![Error](./screenshots/error.png) | ![Historial](./screenshots/history.png) |
+| Vista principal | Consulta del clima |
+|---|---|
+| ![Vista principal de AppClima](./screenshots/main.png) | ![Consulta del clima en AppClima](./screenshots/weather.png) |
 
----
+| Respuesta de la API | Despliegue en Render |
+|---|---|
+| ![Respuesta JSON del endpoint de clima](./screenshots/api.png) | ![Servicio desplegado en Render](./screenshots/render.png) |
 
 ## 🌐 URL Demo
 
 > _Insertar URL de Vercel/Render/Railway después del despliegue_
 
 ```
-https://appclima-g9.vercel.app
+https://appclima-j9gf.onrender.com/
 ```
 
 ---
