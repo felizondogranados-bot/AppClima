@@ -181,7 +181,7 @@ A continuación se muestran algunas capturas del funcionamiento de **AppClima**,
 
 ## 🌐 URL Demo
 
-> _Insertar URL de Vercel/Render/Railway después del despliegue_
+
 
 ```
 https://appclima-j9gf.onrender.com/
